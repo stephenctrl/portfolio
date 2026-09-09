@@ -1,0 +1,75 @@
+---
+// @ts-ignore Astro/Vite resolves the global stylesheet at build time.
+import '../global.css';
+import BentoCard from '../components/BentoCard.astro';
+import { DotField } from '../components/DotField.jsx';
+
+// We import the JSON file that your CI/CD pipeline will generate
+import projects from '../data/projects.json'; 
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marc Stephen Pangan | Portfolio</title>
+  </head>
+  <body class="bg-black text-white min-h-screen p-4 md:p-8 relative z-0 overflow-x-hidden">
+    
+    <!-- The React Interactive Background -->
+    <div class="fixed inset-0 -z-10">
+      <DotField client:load dotRadius={1.5} dotSpacing={14} cursorRadius={500} cursorForce={0.10} bulgeOnly={true} bulgeStrength={67} glowRadius={160} sparkle={false} waveAmplitude={0} />
+    </div>
+
+    <!-- The Bento Grid -->
+    <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[minmax(180px,auto)]">
+      
+      <!-- Hero Island (Takes up 2 columns and 2 rows) -->
+      <BentoCard class="md:col-span-2 lg:col-span-2 row-span-2 bg-linear-to-br from-zinc-900 to-black justify-center">
+        <h1 class="text-4xl font-bold tracking-tight mb-2">Marc Stephen Pangan</h1>
+        <p class="text-zinc-400 text-lg">Computer Science Student focusing on Systems, DevOps, & MLOps Engineering.</p>
+      </BentoCard>
+
+      <!-- Skills Island -->
+      <BentoCard class="md:col-span-1 lg:col-span-1 row-span-2">
+        <h2 class="text-xl font-semibold mb-4">Core Stack</h2>
+        <ul class="space-y-2 text-zinc-400">
+          <li>Linux (Fedora / EndeavourOS)</li>
+          <li>Java & SQL</li>
+          <li>Python & Bash Scripting</li>
+          <li>x86 Assembly</li>
+        </ul>
+      </BentoCard>
+
+      <!-- Certification Island -->
+      <BentoCard class="md:col-span-1 lg:col-span-1 row-span-1 justify-center items-center text-center">
+        <h2 class="text-sm text-zinc-500 uppercase tracking-widest mb-1">Certification</h2>
+        <p class="font-medium text-zinc-200">CS50: Introduction to Computer Science</p>
+      </BentoCard>
+
+      <!-- Featured Static Project Island -->
+      <BentoCard class="md:col-span-2 lg:col-span-2 row-span-1 justify-between">
+        <h2 class="text-xl font-semibold">Featured UI Work</h2>
+        <p class="text-zinc-400 mt-2">"Miss Dior" themed debut invitation website developed for Jashley Megayle D. Sangil.</p>
+      </BentoCard>
+
+      <!-- Dynamic GitHub Projects (Automatically spawned by the pipeline) -->
+      {projects.map((repo) => (
+        <BentoCard class="col-span-1 row-span-1 justify-between">
+          <div>
+            <h3 class="text-lg font-medium text-white truncate">{repo.name}</h3>
+            <p class="text-sm text-zinc-400 mt-2 line-clamp-3">{repo.description || "No description provided."}</p>
+          </div>
+          
+          <div class="mt-4 flex items-center justify-between text-xs text-zinc-500">
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full" style={`background-color: ${repo.primaryLanguage?.color || '#ccc'}`}></span>
+              {repo.primaryLanguage?.name || "Multiple"}
+            </span>
+            <span>⭐ {repo.stargazerCount}</span>
+          </div>
+        </BentoCard>
+      ))}
+      
+    </main>
+  </body>
+</html>
