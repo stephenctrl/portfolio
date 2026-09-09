@@ -1,0 +1,64 @@
+name: Deploy Portfolio to GitHub Pages
+
+on:
+  # 1. Runs whenever you push code to the main branch
+  push:
+    branches: [ main ]
+  # 2. Allows you to click a "Run workflow" button manually in GitHub
+  workflow_dispatch:
+  # 3. Runs automatically every day at midnight UTC to sync new repos
+  schedule:
+    - cron: '0 0 * * *'
+
+# Grant the permissions required to deploy to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Prevent multiple builds from running at the exact same time
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch GitHub Project Data
+        # Executes your TypeScript fetch script before Astro builds
+        run: npx tsx scripts/fetch-repos.ts
+        env:
+          # Pulls your secure token from GitHub Secrets
+          GH_PAT: ${{ secrets.GH_PAT }}
+
+      - name: Build Astro Site
+        run: npm run build
+
+      - name: Upload static files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
