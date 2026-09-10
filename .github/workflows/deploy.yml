@@ -44,7 +44,9 @@ jobs:
         run: npx tsx scripts/fetch-repos.ts
 
       - name: Build Astro site
-        run: npm run build
+        run: |
+          chmod +x ./node_modules/.bin/astro
+          npm run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
