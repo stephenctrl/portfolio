@@ -12,7 +12,7 @@ export function DotField() {
     const DOT_SPACING = 28;
     const BASE_RADIUS = 1.2;
     const GLOW_RADIUS = 90;
-    const ACCENT = [184, 255, 0];
+    const ACCENT = [103, 58, 184];
 
     let mouse = { x: -1000, y: -1000 };
     let width = 0, height = 0, cols = 0, rows = 0;

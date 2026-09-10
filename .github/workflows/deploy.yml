@@ -1,64 +1,56 @@
-name: Deploy Portfolio to GitHub Pages
+name: Deploy Portfolio
 
 on:
-  # 1. Runs whenever you push code to the main branch
+  # 1. STRICT TRIGGER: Only run when code is pushed to main
   push:
-    branches: [ main ]
-  # 2. Allows you to click a "Run workflow" button manually in GitHub
+    branches: ["main"]
+  # Allow manual runs from the GitHub UI
   workflow_dispatch:
-  # 3. Runs automatically every day at midnight UTC to sync new repos
-  schedule:
-    - cron: '0 0 * * *'
 
-# Grant the permissions required to deploy to GitHub Pages
+# 2. PERMISSIONS: Required for native GitHub Pages deployment
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Prevent multiple builds from running at the exact same time
+# 3. CONCURRENCY: Kills the loop by canceling older overlapping runs
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Fetch GitHub Project Data
-        # Executes your TypeScript fetch script before Astro builds
-        run: npx tsx scripts/fetch-repos.ts
+      # Generates projects.json strictly in the CI environment (does NOT commit it)
+      - name: Fetch GitHub Data
         env:
-          # Pulls your secure token from GitHub Secrets
           GH_PAT: ${{ secrets.GH_PAT }}
+        run: npx tsx scripts/fetch-repos.ts
 
-      - name: Build Astro Site
+      - name: Build Astro site
         run: npm run build
 
-      - name: Upload static files
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: './dist'
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
