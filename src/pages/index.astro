@@ -4,10 +4,11 @@ import { DotField } from '../components/DotField.jsx';
 import projects from '../data/projects.json';
 
 const SKILLS = [
-  { label: "Languages", items: ["Java", "PHP", "SQL", "Python", "x86 Assembly"] },
+  { label: "Languages", items: ["Java", "PHP", "SQL", "Python","TypeScript","Dart", "x86 Assembly"] },
   { label: "Frontend", items: ["HTML", "CSS", "JavaScript", "Astro"] },
+  { label: "Databases", items: ["MySQL", "PostgreSQL", "MongoDB","SQLite"] },
   { label: "Systems", items: ["Linux", "Fedora", "EndeavourOS", "Bash"] },
-  { label: "Tools", items: ["Git", "NetBeans", "GlassFish", "GitHub Actions"] },
+  { label: "Tools", items: ["Git", "NetBeans", "GlassFish", "GitHub Actions","Docker","Flutter","Node.js"] },
 ];
 ---
 
@@ -21,7 +22,7 @@ const SKILLS = [
     <div id="scroll-root" class="h-full overflow-y-auto bg-[#0a0a0a]">
       
       <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 transition-all duration-300 border-b border-transparent bg-transparent">
-        <span style="font-family: 'JetBrains Mono', monospace" class="text-sm font-medium tracking-widest text-[#b8ff00]">
+        <span style="font-family: 'JetBrains Mono', monospace" class="text-sm font-medium tracking-widest text-[#673ab8]">
           MSP
         </span>
         <div class="flex gap-8">
@@ -36,20 +37,20 @@ const SKILLS = [
       <section id="hero" class="relative min-h-screen flex flex-col justify-end pb-20 px-8 md:px-16 overflow-hidden">
         <DotField client:only="react" />
         <div class="relative z-10 max-w-5xl">
-          <p style="font-family: 'JetBrains Mono', monospace" class="text-xs tracking-[0.3em] text-[#b8ff00] uppercase mb-6">
+          <p style="font-family: 'JetBrains Mono', monospace" class="text-xs tracking-[0.3em] text-[#673ab8] uppercase mb-6">
             Available for work — 2026
           </p>
           <h1 class="text-[clamp(3rem,10vw,8rem)] font-light leading-[0.92] tracking-tight text-[#f0f0f0] mb-8" style="font-family: 'DM Sans', sans-serif">
-            Marc
+            Stephen
             <br />
-            <span class="text-[#b8ff00]">Stephen</span>
+            <span class="text-[#673ab8]">Pangan</span>
           </h1>
           <div class="flex flex-col md:flex-row md:items-end gap-8 md:gap-16">
             <p class="text-base md:text-lg text-[#888888] max-w-md leading-relaxed font-light">
               Computer Science student building systems that scale and interfaces that feel inevitable. Focused on backend engineering and DevOps.
             </p>
             <div class="flex gap-6 shrink-0">
-              <a href="#work" class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium bg-[#b8ff00] text-[#0a0a0a] hover:bg-white transition-colors duration-200" style="font-family: 'JetBrains Mono', monospace">
+              <a href="#work" class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium bg-[#673ab8] text-[#0a0a0a] hover:bg-white transition-colors duration-200" style="font-family: 'JetBrains Mono', monospace">
                 View work →
               </a>
             </div>
@@ -68,14 +69,14 @@ const SKILLS = [
         </div>
         <div>
           {projects.map((project, index) => (
-            <a href={project.url} class="group block border-t border-[#222222] hover:border-[#b8ff00] transition-all duration-300">
+            <a href={project.url} class="group block border-t border-[#222222] hover:border-[#673ab8] transition-all duration-300">
               <div class="py-8 grid grid-cols-[auto_1fr_auto] md:grid-cols-[60px_1fr_120px_120px] gap-4 md:gap-8 items-start">
                 <span style="font-family: 'JetBrains Mono', monospace" class="text-xs text-[#333] pt-1">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <div class="space-y-3">
                   <div class="flex flex-wrap items-baseline gap-3">
-                    <h3 class="text-xl md:text-2xl font-medium text-[#f0f0f0] group-hover:text-[#b8ff00] transition-colors duration-200" style="font-family: 'DM Sans', sans-serif">
+                    <h3 class="text-xl md:text-2xl font-medium text-[#f0f0f0] group-hover:text-[#673ab8] transition-colors duration-200" style="font-family: 'DM Sans', sans-serif">
                       {project.name}
                     </h3>
                     <span style="font-family: 'JetBrains Mono', monospace" class="text-[10px] tracking-widest text-[#555] uppercase">
@@ -96,7 +97,7 @@ const SKILLS = [
                 <span style="font-family: 'JetBrains Mono', monospace" class="text-xs text-[#333] pt-1 text-right col-start-3 md:col-start-3">
                   {new Date(project.created_at).getFullYear()}
                 </span>
-                <span class="hidden md:block text-right text-[#b8ff00] text-sm pt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'JetBrains Mono', monospace">
+                <span class="hidden md:block text-right text-[#673ab8] text-sm pt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="font-family: 'JetBrains Mono', monospace">
                   View →
                 </span>
               </div>
@@ -125,7 +126,7 @@ const SKILLS = [
                   <p class="text-[10px] tracking-widest text-[#333] uppercase mb-3" style="font-family: 'JetBrains Mono', monospace">{group.label}</p>
                   <div class="flex flex-wrap gap-2">
                     {group.items.map((item) => (
-                      <span class="text-xs px-3 py-1.5 border border-[#1f1f1f] text-[#666] hover:border-[#b8ff00] hover:text-[#b8ff00] transition-colors duration-200 cursor-default" style="font-family: 'JetBrains Mono', monospace">
+                      <span class="text-xs px-3 py-1.5 border border-[#1f1f1f] text-[#666] hover:border-[#673ab8] hover:text-[#673ab8] transition-colors duration-200 cursor-default" style="font-family: 'JetBrains Mono', monospace">
                         {item}
                       </span>
                     ))}
