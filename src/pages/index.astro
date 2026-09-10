@@ -138,6 +138,46 @@ const SKILLS = [
         </div>
       </section>
 
+      <section id="contact" class="px-8 md:px-16 py-32 border-t border-[#1a1a1a]">
+        <div class="max-w-5xl mx-auto">
+          <p class="text-xs tracking-[0.3em] text-[#444] uppercase mb-12" style="font-family: 'JetBrains Mono', monospace">
+            Contact
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 md:gap-0 items-end">
+            <h2 class="text-[clamp(2rem,6vw,5rem)] font-light leading-tight text-[#f0f0f0]" style="font-family: 'DM Sans', sans-serif">
+              Let's build
+              <br />
+              something
+              <br />
+              <span class="text-[#673ab8]">worth making.</span>
+            </h2>
+            <div class="space-y-4 md:text-right">
+              {[
+                { label: "Email", value: "mstephenpangan@gmail.com", href: "mstephenpangan@gmail.com" },
+                { label: "GitHub", value: "github.com/stephenctrl", href: "https://github.com/stephenctrl" },
+                { label: "LinkedIn", value: "linkedin.com/in/stephenpangan/", href: "https://linkedin.com/in/stephenpangan/" },
+              ].map((link) => (
+                <div>
+                  <p class="text-[10px] tracking-widest text-[#333] uppercase mb-1" style="font-family: 'JetBrains Mono', monospace">
+                    {link.label}
+                  </p>
+                  <a href={link.href} class="text-sm text-[#666] hover:text-[#673ab8] transition-colors duration-200" style="font-family: 'JetBrains Mono', monospace">
+                    {link.value}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="mt-24 flex items-center justify-between border-t border-[#1a1a1a] pt-8">
+            <span class="text-[10px] tracking-widest text-[#2a2a2a] uppercase" style="font-family: 'JetBrains Mono', monospace">
+              © 2026 Marc Stephen Pangan
+            </span>
+            <span class="text-[10px] tracking-widest text-[#2a2a2a] uppercase" style="font-family: 'JetBrains Mono', monospace">
+              Designed & built from scratch
+            </span>
+          </div>
+        </div>
+      </section>
     </div>
 
     <script>
