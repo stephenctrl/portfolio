@@ -1,145 +1,86 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-export const DotField = ({
-  dotRadius = 1.5,
-  dotSpacing = 14,
-  cursorRadius = 500,
-  cursorForce = 0.10,
-  bulgeOnly = true,
-  bulgeStrength = 67,
-  glowRadius = 160,
-  sparkle = false,
-  waveAmplitude = 0
-}) => {
+export function DotField() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-    let dots = [];
-    
-    // Track mouse without triggering React renders
-    const mouse = { x: -1000, y: -1000 };
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let animId;
 
-    const handleMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    };
+    const DOT_SPACING = 28;
+    const BASE_RADIUS = 1.2;
+    const GLOW_RADIUS = 90;
+    const ACCENT = [184, 255, 0];
 
-    const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
-    };
+    let mouse = { x: -1000, y: -1000 };
+    let width = 0, height = 0, cols = 0, rows = 0;
 
-    const initGrid = () => {
-      dots = [];
-      const cols = Math.floor(window.innerWidth / dotSpacing);
-      const rows = Math.floor(window.innerHeight / dotSpacing);
-      
-      const offsetX = (window.innerWidth - cols * dotSpacing) / 2;
-      const offsetY = (window.innerHeight - rows * dotSpacing) / 2;
+    function resize() {
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = width * devicePixelRatio;
+      canvas.height = height * devicePixelRatio;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+      cols = Math.ceil(width / DOT_SPACING) + 1;
+      rows = Math.ceil(height / DOT_SPACING) + 1;
+    }
 
-      for (let i = 0; i <= cols; i++) {
-        for (let j = 0; j <= rows; j++) {
-          dots.push({
-            originX: offsetX + i * dotSpacing,
-            originY: offsetY + j * dotSpacing,
-            x: offsetX + i * dotSpacing,
-            y: offsetY + j * dotSpacing,
-            baseAlpha: 0.2 + Math.random() * 0.1
-          });
+    function draw(t) {
+      ctx.clearRect(0, 0, width, height);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * DOT_SPACING;
+          const y = r * DOT_SPACING;
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const influence = Math.max(0, 1 - dist / GLOW_RADIUS);
+          const pulse = 0.5 + 0.5 * Math.sin(t * 0.0008 + c * 0.4 + r * 0.3);
+          const alpha = 0.08 + influence * 0.6 + pulse * 0.04;
+          const rad = BASE_RADIUS + influence * 1.4;
+
+          const [ar, ag, ab] = ACCENT;
+          const gr = Math.round(ar * influence + 80 * (1 - influence));
+          const gg = Math.round(ag * influence + 80 * (1 - influence));
+          const gb = Math.round(ab * influence + 80 * (1 - influence));
+
+          ctx.beginPath();
+          ctx.arc(x, y, rad, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${gr},${gg},${gb},${alpha})`;
+          ctx.fill();
         }
       }
-    };
+      animId = requestAnimationFrame(draw);
+    }
 
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initGrid();
-    };
+    function onMove(e) {
+      const rect = canvas.getBoundingClientRect();
+      mouse = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const time = Date.now() * 0.001;
+    function onLeave() { mouse = { x: -1000, y: -1000 }; }
 
-      for (let i = 0; i < dots.length; i++) {
-        const dot = dots[i];
-        const dx = mouse.x - dot.originX;
-        const dy = mouse.y - dot.originY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        let targetX = dot.originX;
-        let targetY = dot.originY;
-        let radius = dotRadius;
-        let alpha = dot.baseAlpha;
-
-        // Apply wave amplitude if set
-        if (waveAmplitude > 0) {
-          targetY += Math.sin(dot.originX * 0.01 + time) * waveAmplitude;
-        }
-
-        // Apply mouse interaction physics
-        if (distance < cursorRadius) {
-          const force = (cursorRadius - distance) / cursorRadius;
-          
-          if (bulgeOnly) {
-            // Push dots away from cursor
-            const angle = Math.atan2(dy, dx);
-            const pushDistance = force * bulgeStrength;
-            targetX -= Math.cos(angle) * pushDistance;
-            targetY -= Math.sin(angle) * pushDistance;
-          } else {
-            // Pull dots toward cursor
-            targetX += dx * force * cursorForce;
-            targetY += dy * force * cursorForce;
-          }
-
-          // Glow effect near cursor
-          if (distance < glowRadius) {
-            alpha = Math.min(1, alpha + (glowRadius - distance) / glowRadius);
-            radius += force * 1.5;
-          }
-        }
-
-        // Smooth interpolation (easing) back to target positions
-        dot.x += (targetX - dot.x) * 0.1;
-        dot.y += (targetY - dot.y) * 0.1;
-
-        // Sparkle effect
-        if (sparkle && Math.random() < 0.01) {
-          alpha = 1;
-        }
-
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(161, 161, 170, ${alpha})`; // Tailwind zinc-400 equivalent
-        ctx.fill();
-      }
-
-      animationFrameId = requestAnimationFrame(draw);
-    };
-
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
-    
-    resizeCanvas();
-    draw();
+    resize();
+    window.addEventListener("resize", resize);
+    canvas.addEventListener("mousemove", onMove);
+    canvas.addEventListener("mouseleave", onLeave);
+    animId = requestAnimationFrame(draw);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+      canvas.removeEventListener("mousemove", onMove);
+      canvas.removeEventListener("mouseleave", onLeave);
     };
-  }, [dotRadius, dotSpacing, cursorRadius, cursorForce, bulgeOnly, bulgeStrength, glowRadius, sparkle, waveAmplitude]);
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 block w-full h-full pointer-events-none"
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ pointerEvents: "auto" }}
     />
   );
-};
+}
