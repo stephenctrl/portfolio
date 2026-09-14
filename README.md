@@ -20,3 +20,5 @@ To bypass frontend API rate limits and keep tokens secure, this portfolio uses a
 3. The script extracts metadata (names, descriptions, languages) from my latest public repositories and saves it locally.
 4. Astro builds the site, injecting this fresh JSON data into the Bento box components.
 5. The compiled, static HTML/CSS is deployed to GitHub Pages.
+
+[https://stephenctrl.github.io/portfolio/]
